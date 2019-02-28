@@ -1769,6 +1769,35 @@ function wp_get_current_commenter() {
 }
 
 /**
+ * Get unapproved comment author's email.
+ *
+ * Used to allow the commenter to see their pending comment.
+ *
+ * @since 5.1.0
+ *
+ * @return string The unapproved comment author's email (when supplied).
+ */
+function wp_get_unapproved_comment_author_email() {
+	$commenter_email = '';
+
+	if ( ! empty( $_GET['unapproved'] ) && ! empty( $_GET['moderation-hash'] ) ) {
+		$comment_id = (int) $_GET['unapproved'];
+		$comment    = get_comment( $comment_id );
+
+		if ( $comment && hash_equals( $_GET['moderation-hash'], wp_hash( $comment->comment_date_gmt ) ) ) {
+			$commenter_email = $comment->comment_author_email;
+		}
+	}
+
+	if ( ! $commenter_email ) {
+		$commenter       = wp_get_current_commenter();
+		$commenter_email = $commenter['comment_author_email'];
+	}
+
+	return $commenter_email;
+}
+
+/**
  * Inserts a comment into the database.
  *
  * @since 2.0.0
@@ -3246,7 +3275,7 @@ function wp_handle_comment_submission( $comment_data ) {
 	/**
 	 * Filters whether an empty comment should be allowed.
 	 *
-	 * @since 5.0.0
+	 * @since 5.1.0
 	 *
 	 * @param bool  $allow_empty_comment Whether to allow empty comments. Default false.
 	 * @param array $commentdata         Array of comment data to be sent to wp_insert_comment().

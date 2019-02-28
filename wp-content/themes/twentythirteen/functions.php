@@ -283,7 +283,7 @@ function twentythirteen_scripts_styles() {
 	wp_enqueue_style( 'twentythirteen-style', get_stylesheet_uri(), array(), '2013-07-18' );
 
 	// Theme block stylesheet.
-	wp_enqueue_style( 'twentythirteen-block-style', get_template_directory_uri() . '/css/blocks.css', array( 'twentythirteen-style' ), '2018-10-18' );
+	wp_enqueue_style( 'twentythirteen-block-style', get_template_directory_uri() . '/css/blocks.css', array( 'twentythirteen-style' ), '2018-12-30' );
 
 	// Loads the Internet Explorer specific stylesheet.
 	wp_enqueue_style( 'twentythirteen-ie', get_template_directory_uri() . '/css/ie.css', array( 'twentythirteen-style' ), '2013-07-18' );
@@ -323,7 +323,7 @@ add_filter( 'wp_resource_hints', 'twentythirteen_resource_hints', 10, 2 );
  */
 function twentythirteen_block_editor_styles() {
 	// Block styles.
-	wp_enqueue_style( 'twentythirteen-block-editor-style', get_template_directory_uri() . '/css/editor-blocks.css' );
+	wp_enqueue_style( 'twentythirteen-block-editor-style', get_template_directory_uri() . '/css/editor-blocks.css', array(), '2018-12-30' );
 	// Add custom fonts.
 	wp_enqueue_style( 'twentythirteen-fonts', twentythirteen_fonts_url(), array(), null );
 }
@@ -587,8 +587,8 @@ if ( ! function_exists( 'twentythirteen_the_attached_image' ) ) :
 			// get the URL of the next image attachment...
 			if ( $next_id ) {
 				$next_attachment_url = get_attachment_link( $next_id );
-			} // or get the URL of the first image attachment.
-			else {
+			} else {
+				// or get the URL of the first image attachment.
 				$next_attachment_url = get_attachment_link( reset( $attachment_ids ) );
 			}
 		}

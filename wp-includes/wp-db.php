@@ -18,6 +18,7 @@ define( 'EZSQL_VERSION', 'WP1.25' );
  * @since 0.71
  */
 define( 'OBJECT', 'OBJECT' );
+// phpcs:ignore Generic.NamingConventions.UpperCaseConstantName.ConstantNotUpperCase
 define( 'object', 'OBJECT' ); // Back compat.
 
 /**
@@ -417,7 +418,7 @@ class wpdb {
 	/**
 	 * Multisite Blog Metadata table
 	 *
-	 * @since 5.0.0
+	 * @since 5.1.0
 	 * @var string
 	 */
 	public $blogmeta;

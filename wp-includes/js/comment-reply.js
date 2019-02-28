@@ -22,6 +22,9 @@ window.addComment = ( function( window ) {
 		postIdFieldId     : 'comment_post_ID'
 	};
 
+	// Cross browser MutationObserver.
+	var MutationObserver = window.MutationObserver || window.WebKitMutationObserver || window.MozMutationObserver;
+
 	// Check browser cuts the mustard.
 	var cutsTheMustard = 'querySelector' in document && 'addEventListener' in window;
 
@@ -40,8 +43,14 @@ window.addComment = ( function( window ) {
 	// The respond element.
 	var respondElement;
 
+	// The mutation observer.
+	var observer;
+
 	// Initialise the events.
 	init();
+
+	// Set up a MutationObserver to check for comments loaded late.
+	observeChanges();
 
 	/**
 	 * Add events to links classed .comment-reply-link.
@@ -50,14 +59,14 @@ window.addComment = ( function( window ) {
 	 * required to move the comment form. To allow for lazy loading of
 	 * comments this method is exposed as window.commentReply.init().
 	 *
-	 * @since 5.0.0
+	 * @since 5.1.0
 	 *
 	 * @memberOf addComment
 	 *
 	 * @param {HTMLElement} context The parent DOM element to search for links.
 	 */
 	function init( context ) {
-		if ( true !== cutsTheMustard ) {
+		if ( ! cutsTheMustard ) {
 			return;
 		}
 
@@ -87,7 +96,7 @@ window.addComment = ( function( window ) {
 	/**
 	 * Return all links classed .comment-reply-link.
 	 *
-	 * @since 5.0.0
+	 * @since 5.1.0
 	 *
 	 * @param {HTMLElement} context The parent DOM element to search for links.
 	 *
@@ -117,7 +126,7 @@ window.addComment = ( function( window ) {
 	/**
 	 * Cancel event handler.
 	 *
-	 * @since 5.0.0
+	 * @since 5.1.0
 	 *
 	 * @param {Event} event The calling event.
 	 */
@@ -142,7 +151,7 @@ window.addComment = ( function( window ) {
 	/**
 	 * Click event handler.
 	 *
-	 * @since 5.0.0
+	 * @since 5.1.0
 	 *
 	 * @param {Event} event The calling event.
 	 */
@@ -165,11 +174,49 @@ window.addComment = ( function( window ) {
 	}
 
 	/**
+	 * Creates a mutation observer to check for newly inserted comments.
+	 *
+	 * @since 5.1.0
+	 */
+	function observeChanges() {
+		if ( ! MutationObserver ) {
+			return;
+		}
+
+		var observerOptions = {
+			childList: true,
+			subTree: true
+		};
+
+		observer = new MutationObserver( handleChanges );
+		observer.observe( document.body, observerOptions );
+	}
+
+	/**
+	 * Handles DOM changes, calling init() if any new nodes are added.
+	 *
+	 * @since 5.1.0
+	 *
+	 * @param {Array} mutationRecords Array of MutationRecord objects.
+	 */
+	function handleChanges( mutationRecords ) {
+		var i = mutationRecords.length;
+
+		while ( i-- ) {
+			// Call init() once if any record in this set adds nodes.
+			if ( mutationRecords[ i ].addedNodes.length ) {
+				init();
+				return;
+			}
+		}
+	}
+
+	/**
 	 * Backward compatible getter of data-* attribute.
 	 *
 	 * Uses element.dataset if it exists, otherwise uses getAttribute.
 	 *
-	 * @since 5.0.0
+	 * @since 5.1.0
 	 *
 	 * @param {HTMLElement} Element DOM element with the attribute.
 	 * @param {String}      Attribute the attribute to get.
@@ -190,7 +237,7 @@ window.addComment = ( function( window ) {
 	 *
 	 * Local alias for document.getElementById.
 	 *
-	 * @since 5.0.0
+	 * @since 5.1.0
 	 *
 	 * @param {HTMLElement} The requested element.
 	 */
